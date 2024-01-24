@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ ! $(command -v singularity) ]; then
+	module load singularity
+fi
+
+VERSION=0.46.2
+PACKAGE=kallisto
+TOOL=kallisto
+DIRECTORY=$PWDHERE/software/Kallisto
+STORAGE=/home/ssanders
+
+OPTIONS=$OPTIONS" -B $STORAGE"
+
+singularity exec $OPTIONS $DIRECTORY/singularity-$PACKAGE-$VERSION.sif $TOOL "$@"

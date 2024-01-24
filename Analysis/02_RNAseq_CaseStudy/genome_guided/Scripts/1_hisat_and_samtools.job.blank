@@ -1,0 +1,26 @@
+#!/bin/bash
+#PBS -k oe
+#PBS -m abe
+#PBS -M 
+#PBS -N hisat2
+
+module load bio/2.0
+
+ref=../Reference/LRV0genome
+
+stub=
+
+reads="../Clean_Reads/"
+left="_1.final.clean.fq"
+right="_2.final.clean.fq"
+
+sam=../Mapping/SamFiles/$stub.sam
+summary=../Mapping/SummaryFiles/$stub.hisat2.summary
+
+#uncomment for paired reads
+#hisat2 -p 2 -x $ref -1 $reads$stub$left -2 $reads$stub$right -S $sam --max-intronlen 5000 --new-summary --summary-file $summary
+#uncomment for single reads
+hisat2 -p 2 -x $ref -U $reads$stub$left -S $sam --max-intronlen 5000 --new-summary --summary-file $summary
+
+samtools sort $sam > ${sam%sam}sort.bam
+samtools index ${sam%sam}sort.bam

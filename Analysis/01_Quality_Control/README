@@ -1,0 +1,51 @@
+OVERVIEW:
+FastQC → Trimmomatic/Sickle →  Contamination Removal →  FastQC (optional)
+
+Contaminant Removal Options:
+RemoveRNA (prokaryote, meta-samples) – bbduk with SortMeRNA database
+RemoveHost (meta-samples, etc)
+RemoveSpike (all) - BBMap
+
+Outputs: *_1.final.fa, *_2.final.fa, *_u.final.fa, *_12.final.fa, *stats.txt, *finalstats.txt
+
+DIRECTIONS:
+After putting your raw reads (in *gz format) in the Input folder above, please run the scripts in alphabetical order (i.e. A_Run*, then B_Run*, etc.). 
+If you wish to skip a decontamination step, please use the *_skip.sh script in it's place (i.e. instead of D_Run*, use D_skip.sh).
+
+Sometimes our file names are variable, with some using *R1* or *_1* to designate the read 1, and similar for read 2.  This is a consideration
+when running this workflow, but it is easy to adjust.  In the C_RunTrimmomaticandSickle.sh file, there are two points where you will need to
+adjust the code to account for *R1* format - they are labeled with the changes needed.  There are only two points, and they are both at the 
+top of the script.
+
+SCRIPT SPECIFIC NOTES:
+
+C_RunTrimmomaticandSickle.sh:
+adapters.fa holds the adapters used for trimmomatic.  Please review to make sure they match the adapters you used for your sequencing.
+Also, please feel free to adjust the trimmomatic settings to match any oddities in your initial fastqc reporting.
+
+D_RunRemoveSpike.sh:
+The spike sequences are in the file phix_adapters.fa.gz in the ../Reference directory.  Feel free to add other files here to remove any
+known contaminants, and simply replace the file name in this script to remove them.
+
+E_RunRemoveHost.sh:
+The host is defaulted to human, but mouse is also supported.  Please see database download instructions in the set up to set these up.
+
+F_RunRemoveRNA.sh:
+SortMeRNA Databases:
+The difference between the databases is the % ID for clustering the sequences for each kingdom + rRNA component.
+Specifically,
+
+smr_v4.3_default_db.fasta -> bac-16S 90%, 5S & 5.8S seeds, rest 95% (benchmark accuracy: 99.899%)
+smr_v4.3_sensitive_db.fasta -> all 97% (benchmark accuracy: 99.907%)
+smr_v4.3_sensitive_db_rfam_seeds.fasta -> all 97%, except RFAM database which includes the full seed database sequences
+
+H_CopyResults.sh:
+After you run this script, you will end up with a directory called "final_QC_output".  This holds a copy of your final cleaned data.  
+To save on space, you can remove all other folders in this directory once you are satisfied with the final files.  These files are in
+various formats to allow for downstream use in paired, single, and interleaved formats.
+
+If you would like to re-run fastqc on the final output, you can do so with:
+cd final_QC_output/
+for f in *fq; do
+    fastqc $f;
+done

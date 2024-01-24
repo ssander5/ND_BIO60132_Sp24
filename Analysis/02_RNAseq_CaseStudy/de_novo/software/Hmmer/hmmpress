@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [ ! $(command -v singularity) ]; then
+	module load singularity
+fi
+
+VERSION=3.1b
+PACKAGE=hmmer
+TOOL=hmmpress
+DIRECTORY=$PWDHERE/software/Hmmer
+STORAGE=/home/ssanders
+
+
+OPTIONS=$OPTIONS" -B $STORAGE"
+
+singularity exec $OPTIONS $DIRECTORY/singularity-$PACKAGE-$VERSION.sif $TOOL "$@"

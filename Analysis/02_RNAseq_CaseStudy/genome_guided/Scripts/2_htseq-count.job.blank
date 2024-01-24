@@ -1,0 +1,13 @@
+#!/bin/bash
+#PBS -k oe
+#PBS -N htseq
+
+module load bio/2.0
+
+stub=
+gff=../Reference/LRV0.gff
+
+echo $stub
+htseq-count -f bam -r pos -s no -m intersection-nonempty -t exon -i Parent ../Mapping/SamFiles/$stub.sort.bam $gff > ../Counts/$stub.counts
+
+#for more information about the -m options, please see https://htseq.readthedocs.io/en/release_0.11.1/count.html
